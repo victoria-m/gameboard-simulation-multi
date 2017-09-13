@@ -174,12 +174,14 @@ function step() {
   setTimeout(function() {
     request = requestAnimationFrame(step)
 
+    // if it is red's move
     if (redMarker.moving && turn == redMarker.color) {
       context.clearRect(0, 0, canvas.width, canvas.height)
       redMarker.move()
       grid.draw(redMarker, blueMarker)
       turn = blueMarker.color
     }
+    // if it is blue's move
     else if (blueMarker.moving && turn == blueMarker.color) {
       context.clearRect(0, 0, canvas.width, canvas.height)
       blueMarker.move()
@@ -187,6 +189,7 @@ function step() {
       if (redMarker.moving) { turn = redMarker.color }
     }
 
+    // if game ends
     if (!blueMarker.moving && !redMarker.moving) {
       window.cancelAnimationFrame(request)
       results.process()
@@ -235,24 +238,20 @@ Results.prototype.process = function() {
 
   // get max and average
   var sum = 0
-
   for (var i = 0; i < this.cellTouches.length; ++i) {
     for (var j = 0; j < this.cellTouches[i].length; ++j) {
       if (this.cellTouches[i][j] > this.maxTouches) this.maxTouches = this.cellTouches[i][j]
       sum += this.cellTouches[i][j]
     }
   }
-
   this.avgTouches = sum / (grid.NUM_ROWS * grid.NUM_COLS)
 
   // get number of moves for red and blue markers and number of times they were sent home
   this.redMoves = redMarker.moves
   this.blueMoves = blueMarker.moves
-  
+
   this.redWentHome = redMarker.wentHome
   this.blueWentHome = blueMarker.wentHome
-
-  console.log(this)
 }
 
 Results.prototype.toHtml = function() {
@@ -265,7 +264,6 @@ Results.prototype.toHtml = function() {
           <h3>Number of times blue marker moved</h3><p>" + this.blueMoves + "</p>\
           <h3>Number of times red marker was sent home</h3><p>" + this.redWentHome + "</p>\
           <h3>Number of times blue marker was sent home</h3><p>" + this.blueWentHome + "</p>"
-
 }
 
 Results.prototype.toHtmlTable = function() {
