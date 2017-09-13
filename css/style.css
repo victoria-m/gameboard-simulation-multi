@@ -1,0 +1,32 @@
+body {
+  margin: auto;
+  width: 80%;
+}
+
+table {
+  width: 100%;
+}
+h1, h4, input {
+  margin: .5em 0em .5em 0em
+}
+
+.navigation {
+  font-size: 1.5em;
+  word-spacing: 1.5em;
+  margin: 1em 0em 1em 0em;
+}
+
+.navigation a {
+  text-decoration: none;
+}
+
+.content{
+  clear: both;
+}
+canvas {
+  width: 100%;
+}
+
+#results {
+  clear: both;
+}
