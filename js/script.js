@@ -156,7 +156,6 @@ Marker.prototype.touching = function(otherMarker) {
   return false
 }
 
-// remember to redraw after they touch somewhere
 Marker.prototype.goHome = function() {
   this.x = this.home.x
   this.y = this.home.y
