@@ -75,6 +75,7 @@ var Marker = function(x, y, color) {
   this.color = color
   this.direction = ""
   this.steps = 0
+  this.moves = 0
   this.moving = true
   this.history = []
 
@@ -85,7 +86,6 @@ var Marker = function(x, y, color) {
 Marker.prototype.prepareForMove = function() {
   // Step 1: generate direction
   this.direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)]
-  ++results.stepOneExecs
 
   // Step 2: generate step from 0 to 2
   this.steps = Math.floor(Math.random() * 3)
@@ -97,22 +97,35 @@ Marker.prototype.move = function() {
   // Step 3: try to move the marker
   switch (this.direction) {
   case 'up':
-    if (this.y - this.steps >= 0) this.y -= this.steps
+    if (this.y - this.steps >= 0)  {
+      this.y -= this.steps
+      ++this.moves
+    }
     break
   case 'right':
-    if (this.x + this.steps < grid.NUM_COLS) this.x += this.steps
+    if (this.x + this.steps < grid.NUM_COLS) {
+      this.x += this.steps
+      ++this.moves
+    }
     break
   case 'down':
-    if (this.y + this.steps < grid.NUM_ROWS) this.y += this.steps
+    if (this.y + this.steps < grid.NUM_ROWS) {
+      this.y += this.steps
+      ++this.moves
+    }
     break
   case 'left':
-    if (this.x - this.steps >= 0) this.x -= this.steps
+    if (this.x - this.steps >= 0) {
+      this.x -= this.steps
+      ++this.moves
+    }
     break
   }
 
   // Step 4: check if game ended:
   if (this.color == RED && this.x == grid.NUM_COLS - 1 && this.y == 0) {
     results.gameEndReason = RED + " marker reached right corner"
+    results.winner = RED
     this.moving = false
     blueMarker.moving = false
   }
@@ -120,11 +133,13 @@ Marker.prototype.move = function() {
 
   if (this.color == BLUE && this.x == 0 && this.y == grid.NUM_ROWS - 1) {
     results.gameEndReason = BLUE + " marker reached left corner"
+    results.winner = BLUE
     this.moving = false
     redMarker.moving = false
   }
   else if (this.color == BLUE && this.history.length > MAX_MOVES) {
     results.gameEndReason = "Both markers moved over the maximum of " + MAX_MOVES + " times"
+    results.winner = "neither marker"
     this.moving = false
   }
 
@@ -187,14 +202,20 @@ function fillDropdown() {
   for (var i = MIN_FPS; i <= MAX_FPS; ++i) {
     if (i % 5 == 0 || i == 2) { speedDropdown.options[speedDropdown.options.length] = new Option(i, i) }
   }
+
+  // set the dropdown's default value
+  speedDropdown.value = '5'
 }
 
 var Results = function() {
   this.gameEndReason = ""
-  this.stepOneExecs = 0
+  this.winner = ""
+  this.redMoves = 0
+  this.blueMoves = 0
+  this.redWentHome = 0
+  this.blueWentHome = 0
   this.cellTouches = new Array()
   this.maxTouches = 0
-  this.minTouches = 0
   this.avgTouches = 0
 }
 
@@ -205,33 +226,42 @@ Results.prototype.process = function() {
     for (var j = 0; j < grid.NUM_COLS; ++j) { this.cellTouches[i][j] = 0 }
   }
 
-  // increment cell touches grid's indices for every set of marker coordinates
-  for (var i = 0; i < marker.history.length; ++i) { ++this.cellTouches[marker.history[i].x][marker.history[i].y] }
+  // increment cell touches grid's indices for every set of marker coordinates in red marker
+  for (var i = 0; i < redMarker.history.length; ++i) { ++this.cellTouches[redMarker.history[i].x][redMarker.history[i].y] }
 
-  // get min, max, avg
+  // increment cell touches grid's indices for every set of marker coordinates in blue marker
+  for (var i = 0; i < blueMarker.history.length; ++i) { ++this.cellTouches[blueMarker.history[i].x][blueMarker.history[i].y] }
+
+  // get max and average
   var sum = 0
-
-  // initialize min to one of the cell touch values
-  this.minTouches = this.cellTouches[0][0]
 
   for (var i = 0; i < this.cellTouches.length; ++i) {
     for (var j = 0; j < this.cellTouches[i].length; ++j) {
       if (this.cellTouches[i][j] > this.maxTouches) this.maxTouches = this.cellTouches[i][j]
-      if (this.cellTouches[i][j] < this.minTouches) this.minTouches = this.cellTouches[i][j]
       sum += this.cellTouches[i][j]
     }
   }
 
   this.avgTouches = sum / (grid.NUM_ROWS * grid.NUM_COLS)
+
+  // get number of moves for red and blue markers
+  this.redMoves = redMarker.moves
+  this.blueMoves = blueMarker.moves
+
+  console.log(this)
 }
 
 Results.prototype.toHtml = function() {
-  return "<h3>Number of step one executions</h3><p>" + this.stepOneExecs + "</p>\
+  return "<h3>Winner</h3><p>" + this.winner + "</p>\
           <h3>Reason why game ended</h3><p>" + this.gameEndReason + "</p>\
-          <h3>Grid indicating number of times each cell was touched</h3>" + this.toHtmlTable(this.cellTouches) + "\
+          <h3>Grid showing number of times each cell was touched by the markers</h3>" + this.toHtmlTable(this.cellTouches) + "\
           <h3>Maximum number of touches for any cell</h3><p>" + this.maxTouches + "</p>\
-          <h3>Minimum number of touches for any cell</h3><p>" + this.minTouches + "</p>\
-          <h3>Average number of touches for any cell</h3><p>" + this.avgTouches + "</p>"
+          <h3>Average number of touches for any cell</h3><p>" + this.avgTouches + "</p>\
+          <h3>Number of times red marker moved</h3><p>" + this.redMoves + "</p>\
+          <h3>Number of times blue marker moved</h3><p>" + this.blueMoves + "</p>\
+          <h3>Number of times red marker was sent home</h3><p>" + this.redWentHome + "</p>\
+          <h3>Number of times blue marker was sent home</h3><p>" + this.blueWentHome + "</p>"
+
 }
 
 Results.prototype.toHtmlTable = function() {
