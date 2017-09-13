@@ -17,11 +17,11 @@ function main() {
   blueMarker = new Marker(NUM_ROWS - 1, 0, BLUE)
   results = new Results()
 
-  // set frames per second
+  // set frames per second according to user's selection
   var fpsSelection = document.getElementById('speed')
   fps = fpsSelection.options[fpsSelection.selectedIndex].value
 
-  // red goes first
+  // red makes first move
   turn = redMarker.color
 
   // initialize the animation loop
@@ -54,15 +54,15 @@ Grid.prototype.draw = function(mainMarker, otherMarker) {
       if (otherMarker.x > this.NUM_COLS - 1) otherMarker.x = this.NUM_COLS - 1
       if (otherMarker.y > this.NUM_ROWS - 1) otherMarker.y = this.NUM_ROWS - 1
 
-      // set the marker fill color,
+      // set the markers' fill color,
       if (mainMarker.x == i && mainMarker.y == j) { context.fillStyle = mainMarker.color }
       if (otherMarker.x == i && otherMarker.y == j) {context.fillStyle = otherMarker.color }
 
-      // check for collision after drawing markers
-      if (mainMarker.touching(otherMarker)) { otherMarker.goHome() }
-
       // fill the current rectangle:
       context.fillRect(i * this.margin, j * this.margin, this.width, this.height)
+
+      // check for collision after drawing markers
+      if (mainMarker.touching(otherMarker)) { otherMarker.goHome() }
     }
   }
 }
@@ -76,6 +76,7 @@ var Marker = function(x, y, color) {
   this.direction = ""
   this.steps = 0
   this.moves = 0
+  this.wentHome = 0
   this.moving = true
   this.history = []
 
@@ -159,6 +160,7 @@ Marker.prototype.touching = function(otherMarker) {
 Marker.prototype.goHome = function() {
   this.x = this.home.x
   this.y = this.home.y
+  ++this.wentHome
 }
 
 // define Cell
@@ -243,9 +245,12 @@ Results.prototype.process = function() {
 
   this.avgTouches = sum / (grid.NUM_ROWS * grid.NUM_COLS)
 
-  // get number of moves for red and blue markers
+  // get number of moves for red and blue markers and number of times they were sent home
   this.redMoves = redMarker.moves
   this.blueMoves = blueMarker.moves
+  
+  this.redWentHome = redMarker.wentHome
+  this.blueWentHome = blueMarker.wentHome
 
   console.log(this)
 }
