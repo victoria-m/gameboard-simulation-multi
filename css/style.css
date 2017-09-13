@@ -10,6 +10,10 @@ h1, h4, input {
   margin: .5em 0em .5em 0em
 }
 
+input[type=submit] {
+  margin-left: 2em;
+}
+
 .navigation {
   font-size: 1.5em;
   word-spacing: 1.5em;

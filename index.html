@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
 
-  <body>
-
+  <body onload="fillDropdown()">
     <div class="navigation">
       <a href="index.html">Index</a>
       <a href="documentation.html">Documentation</a>
@@ -23,11 +22,12 @@
     <div class="content">
       <p>Results will be displayed at the bottom of the page.</p>
 
+      <label for="speed">Speed (frames per second)</label>
+      <select id="speed"></select>
+
       <input type="submit" value="Start Game" onclick="main()"/>
 
       <canvas id="canvas"></canvas>
-
-      <div id="currently-moving"></div>
 
       <div id="results"></div>
 
