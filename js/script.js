@@ -124,15 +124,15 @@ Marker.prototype.move = function() {
 
   // Step 4: check if game ended:
   if (this.color == RED && this.x == grid.NUM_COLS - 1 && this.y == 0) {
-    results.gameEndReason = RED + " marker reached right corner"
+    results.gameEndReason = RED + " marker reached upper right corner"
     results.winner = RED
     this.moving = false
     blueMarker.moving = false
   }
   else if (this.color == RED && this.history.length > MAX_MOVES) { this.moving = false }
 
-  if (this.color == BLUE && this.x == 0 && this.y == grid.NUM_ROWS - 1) {
-    results.gameEndReason = BLUE + " marker reached left corner"
+  if (this.color == BLUE && this.x == grid.NUM_COLS - 1 && this.y == grid.NUM_ROWS - 1) {
+    results.gameEndReason = BLUE + " marker reached lower right corner"
     results.winner = BLUE
     this.moving = false
     redMarker.moving = false
