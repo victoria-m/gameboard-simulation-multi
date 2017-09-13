@@ -1,7 +1,8 @@
 'use strict'
 
 // define globals
-const MARGIN = 60, WIDTH = 50, HEIGHT = 50, FPS = 20, DIRECTIONS = ['up', 'right', 'down', 'left'], MAX_MOVES = 1000000
+const MARGIN = 60, WIDTH = 50, HEIGHT = 50, FPS = 20, DIRECTIONS = ['up', 'right', 'down', 'left']
+const MAX_MOVES = 1000000, RED = "red", BLUE = "blue"
 var grid, redMarker, blueMarker, results, request, numRows, numCols
 
 // set up the canvas and its context
@@ -15,8 +16,8 @@ function main() {
 
   // instantiate the Grid, Marker, and Results
   grid = new Grid(numRows, numCols, HEIGHT, WIDTH, MARGIN)
-  redMarker = new Marker(0, numRows - 1, "red")
-  blueMarker = new Marker(numRows - 1, 0, "blue")
+  redMarker = new Marker(0, numRows - 1, RED)
+  blueMarker = new Marker(numRows - 1, 0, BLUE)
   results = new Results()
 
   // initialize the animation loop
@@ -105,23 +106,20 @@ Marker.prototype.move = function() {
     break
   }
 
-  // check if game ended:
-
-  // red marker:
-  if (this.color == "red" && this.x == grid.numCols - 1 && this.y == 0) {
-    results.gameEndReason = "Red marker reached right corner"
+  // Step 4: check if game ended:
+  if (this.color == RED && this.x == grid.numCols - 1 && this.y == 0) {
+    results.gameEndReason = RED + " marker reached right corner"
     this.moving = false
     blueMarker.moving = false
   }
-  else if (this.color == "red" && this.history.length > MAX_MOVES) { this.moving = false }
+  else if (this.color == RED && this.history.length > MAX_MOVES) { this.moving = false }
 
-  // blue marker:
-  if (this.color == "blue" && this.x == 0 && this.y == grid.numRows - 1) {
-    results.gameEndReason = "Blue marker reached left corner"
+  if (this.color == BLUE && this.x == 0 && this.y == grid.numRows - 1) {
+    results.gameEndReason = BLUE + " marker reached left corner"
     this.moving = false
     redMarker.moving = false
   }
-  else if (this.color == "blue" && this.history.length > MAX_MOVES) {
+  else if (this.color == BLUE && this.history.length > MAX_MOVES) {
     results.gameEndReason = "Both markers moved over the maximum of " + MAX_MOVES + " times"
     this.moving = false
   }
@@ -138,7 +136,6 @@ Marker.prototype.touching = function(otherMarker) {
   if(this.x == otherMarker.x && this.y == otherMarker.y) { return true }
   return false
 }
-
 
 // remember to redraw after they touch somewhere
 Marker.prototype.goHome = function() {
