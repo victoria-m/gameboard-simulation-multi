@@ -1,5 +1,7 @@
 # gambeboard-simulation-multi
 
+![Gameboard Sim Multi](/img/gameboard_multi.gif "Gameboard Sim Multi")
+
 ## Summary
 Pretend there is a 10 by 10 grid sketched out on a metal wall. You place a red and a blue marker on opposite corners of the grid. The markers take turns moving around randomly on the grid. The first marker to reach its destination wins.
 
