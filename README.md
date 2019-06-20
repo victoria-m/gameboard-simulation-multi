@@ -11,7 +11,7 @@ Pretend there is a 10 by 10 grid sketched out on a metal wall. You place a red a
 If you would like to change the simulation speed (measured in frames per second), select a value from the dropdown list. Then click **Start Game**.
 
 ## Website
-https://victoria-m.github.io/gameboard-simulation-multi/index.html
+https://victoria-miltcheva.github.io/gameboard-simulation-multi/index.html
 
 ## Rules
 - The markers take turns to move
